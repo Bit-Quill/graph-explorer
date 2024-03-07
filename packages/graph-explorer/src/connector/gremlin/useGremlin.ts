@@ -21,7 +21,7 @@ const useGremlin = () => {
   const _gremlinFetch = useCallback((options) => {
     return async (queryTemplate: string) => {
       const body = JSON.stringify({ query: queryTemplate });
-      const headers = options.queryId
+      const headers = options?.queryId
         ? {
           'Content-Type': 'application/json',
           'queryId': options.queryId
@@ -85,6 +85,7 @@ const useGremlin = () => {
   let keywordSearchQueryId: string | undefined;
   const keywordSearchFunc = useCallback((req, options) => {
     if (keywordSearchQueryId) {
+      console.log('canceling: ', keywordSearchQueryId); // !!!
       // no need to wait for confirmation
       _gremlinCancel()(keywordSearchQueryId);
     }
@@ -92,7 +93,9 @@ const useGremlin = () => {
     options ??= {};
     options.queryId = v4();
     keywordSearchQueryId = options.queryId;
+    console.log('starting: ', keywordSearchQueryId); // !!!
     options.successCallback = () => {
+      console.log('done: ', keywordSearchQueryId); // !!!
       keywordSearchQueryId = undefined;
     };
 

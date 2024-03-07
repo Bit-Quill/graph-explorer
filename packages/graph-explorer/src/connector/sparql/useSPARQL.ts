@@ -116,7 +116,7 @@ const useSPARQL = (blankNodes: BlankNodesMap) => {
   const _sparqlFetch = useCallback((options) => {
     return async (queryTemplate: string) => {
       const body = `query=${encodeURIComponent(queryTemplate)}`;
-      const headers = options.queryId
+      const headers = options?.queryId
         ? {
           'accept': 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -240,6 +240,7 @@ const useSPARQL = (blankNodes: BlankNodesMap) => {
   let keywordSearchQueryId: string | undefined;
   const keywordSearchFunc = useCallback(async (req, options) => {
     if (keywordSearchQueryId) {
+      console.log('canceling: ', keywordSearchQueryId); // !!!
       // no need to wait for confirmation
       _sparqlCancel()(keywordSearchQueryId);
     }
@@ -247,7 +248,9 @@ const useSPARQL = (blankNodes: BlankNodesMap) => {
     options ??= {};
     options.queryId = v4();
     keywordSearchQueryId = options.queryId;
-    options.successCallback = () => {
+    console.log('starting: ', keywordSearchQueryId); // !!!
+    options.successCallback = () => { 
+      console.log('done: ', keywordSearchQueryId); // !!!
       keywordSearchQueryId = undefined;
     };
 
